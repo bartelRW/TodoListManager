@@ -146,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageSuccess'
+                $ref: '#/components/schemas/TodoEntry'
         400:
           description: request has incorrect format
           content: {}
@@ -177,7 +177,10 @@ paths:
       responses:
         200:
           description: entry deleted
-          content: {"success"}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSuccess'
         404:
           description: id not found
           content: {}
