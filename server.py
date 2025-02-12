@@ -46,7 +46,7 @@ def apply_cors_header(response):
     return response
 
 # define endpoint for getting and deleting existing todo lists
-@app.route('/list/<list_id>', methods=['GET', 'DELETE'])
+@app.route('/todo-list/<list_id>', methods=['GET', 'DELETE'])
 def handle_list(list_id):
     # find todo list depending on given list id
     list_item = None
@@ -58,9 +58,9 @@ def handle_list(list_id):
     if not list_item:
         abort(404)
     if request.method == 'GET':
-        # find all todo entries for the todo list with the given id
+        # get todo list with the given id
         print('Returning todo list...')
-        return jsonify([i for i in todos if i['list'] == list_id])
+        return jsonify(next(l for l in todo_lists if l["id"] == list_id ))
     elif request.method == 'DELETE':
         # delete list with given id
         print('Deleting todo list...')
@@ -69,7 +69,7 @@ def handle_list(list_id):
 
 
 # define endpoint for adding a new list
-@app.route('/list', methods=['POST'])
+@app.route('/todo-list', methods=['POST'])
 def add_new_list():
     # make JSON from POST data (even if content type is not set correctly)
     new_list = request.get_json(force=True)
@@ -81,9 +81,50 @@ def add_new_list():
 
 
 # define endpoint for getting all lists
-@app.route('/lists', methods=['GET'])
+@app.route('/todo-lists', methods=['GET'])
 def get_all_lists():
     return jsonify(todo_lists)
+
+
+# define endpoint for getting all entries in a todo list
+@app.route('/todo-list/<list_id>/entries', methods=['GET'])
+def get_all_entries(list_id):
+    # find todo list depending on given list id
+    list_item = None
+    for l in todo_lists:
+        if l['id'] == list_id:
+            list_item = l
+            break
+    # if the given list id is invalid, return status code 404
+    if not list_item:
+        abort(404)
+    elif request.method == 'GET':
+        # find all todo entries for the todo list with the given id
+        print('Returning entries...')
+        return jsonify([i for i in todos if i['list'] == list_id])
+
+  
+# define endpoint for adding a new entry to a list
+@app.route('/todo-list/<list_id>/entry', methods=['POST'])
+def add_new_entry(list_id):
+    # find todo list depending on given list id
+    list_item = None
+    for l in todo_lists:
+        if l['id'] == list_id:
+            list_item = l
+            break
+    # if the given list id is invalid, return status code 404
+    if not list_item:
+        abort(404)
+    elif request.method == 'POST':
+        # add new entry for the todo list with the given id
+        new_entry = request.get_json(force=True)
+        print('Got new entry to be added: {}'.format(new_entry))
+        new_entry['id'] = uuid.uuid4()
+        new_entry['name'] = ''
+        new_entry['description'] = ''
+        new_entry['list'] = list_id
+        return jsonify(new_entry)
 
 
 if __name__ == '__main__':
