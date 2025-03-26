@@ -8,9 +8,7 @@ Requirements:
 """
 
 import uuid 
-
-from flask import Flask, request, jsonify, abort
-
+from flask import Flask, request, jsonify, abort, render_template
 
 # initialize Flask server
 app = Flask(__name__)
@@ -41,9 +39,15 @@ todos = [
 @app.after_request
 def apply_cors_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE,PUT'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
+
+#landing page
+@app.route('/')
+def index():
+    return render_template("index.html")
+
 
 #Endpoint for getting and deleting existing todo lists
 @app.route('/todo-list/<list_id>', methods=['GET', 'DELETE'])

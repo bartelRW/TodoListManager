@@ -176,7 +176,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'  
-  /todo-list/{list_id}/entry{entry_id}:
+  /todo-list/{list_id}/entry/{entry_id}:
     put:
       tags:
       - Listenverwaltung
