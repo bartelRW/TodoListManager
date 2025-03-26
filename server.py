@@ -43,10 +43,10 @@ def apply_cors_header(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-#landing page
+#landing page with rendered html template
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html", todo_lists=todo_lists, todos=todos)
 
 
 #Endpoint for getting and deleting existing todo lists
