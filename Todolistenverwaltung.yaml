@@ -17,7 +17,7 @@ paths:
     get:
       tags:
       - Listenverwaltung
-      summary: Get all items from list
+      summary: Get List
       operationId: getList
       parameters:
       - name: list_id
