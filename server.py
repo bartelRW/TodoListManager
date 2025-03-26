@@ -45,7 +45,7 @@ def apply_cors_header(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-# define endpoint for getting and deleting existing todo lists
+#Endpoint for getting and deleting existing todo lists
 @app.route('/todo-list/<list_id>', methods=['GET', 'DELETE'])
 def handle_list(list_id):
     # find todo list depending on given list id
@@ -68,7 +68,7 @@ def handle_list(list_id):
         return '', 200
 
 
-# define endpoint for adding a new list
+#Endpoint for adding a new list
 @app.route('/todo-list', methods=['POST'])
 def add_new_list():
     # make JSON from POST data (even if content type is not set correctly)
@@ -80,13 +80,13 @@ def add_new_list():
     return jsonify(new_list), 200
 
 
-# define endpoint for getting all lists
+#Endpoint for getting all lists
 @app.route('/todo-lists', methods=['GET'])
 def get_all_lists():
     return jsonify(todo_lists)
 
 
-# define endpoint for getting all entries in a todo list
+#Endpoint for getting all entries in a todo list
 @app.route('/todo-list/<list_id>/entries', methods=['GET'])
 def get_all_entries(list_id):
     # find todo list depending on given list id
@@ -125,6 +125,37 @@ def add_new_entry(list_id):
         new_entry['description'] = ''
         new_entry['list'] = list_id
         return jsonify(new_entry)
+
+
+#Endpoint for updating an existing entry or to delete an existing entry in a todo list
+@app.route('/todo-list/<list_id>/entry/<entry_id>', methods=['PUT', 'DELETE'])
+def handle_entry(list_id, entry_id):
+    # find todo list depending on given list id
+    list_item = None
+    for l in todo_lists:
+        if l['id'] == list_id:
+            list_item = l
+            break
+    # if the given list id is invalid, return status code 404
+    if not list_item:
+        abort(404)
+    
+    #find entry depending on given entry id
+    entry_item = None
+    for entry in list_item:
+        if entry['id'] == entry_id:
+            entry_item = entry
+            break
+    #if the given entry id is invalid, return status code 404
+    if not entry_item:
+        abort(404)
+
+    elif request.method == 'PUT':
+        # update entry with the given object
+        print('Updated given entry')
+        entry_item["name"] = "new name"
+        entry_item["description"] = "new description"
+        return jsonify(entry_item)
 
 
 if __name__ == '__main__':

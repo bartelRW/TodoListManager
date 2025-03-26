@@ -260,3 +260,21 @@ components:
       properties:
         msg:
           type: string
+    Error404:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: "Das Objekt konnte nicht gefunden werden"
+    Error405:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: "Es wurde eine falsche Methode verwendet"
+    Error500:
+      type: object
+      properties:
+          msg:
+            type: string
+            description: "Server Fehler"
