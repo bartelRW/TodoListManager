@@ -17,7 +17,10 @@
                 <div class="row">
                     <div class="col">
                         <div class="alert alert-success" role="alert">
-                            <h5>Entwurf und Implementierung einer REST-Schnittstelle</h4>
+                            <h5>
+                                Entwurf und Implementierung einer REST-Schnittstelle
+                                <img src="https://icons.iconarchive.com/icons/papirus-team/papirus-apps/24/python-icon.png" width="24" height="24">
+                            </h5>
                             <p>
                                 Die Todo-Listen-Verwaltung ist eine Beispiel-Anwendung für die Realisierung einer REST-Schnittstelle. <br>
                                 Es ist möglich anhand folgender Endpunkte Listen mit entsprechenden Einträgen zu erstellen und zu bearbeiten.
@@ -33,7 +36,7 @@
                             <thead>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th class="text-end">Funktionen</th>
+                                <th class="text-end pe-4">Funktionen</th>
                             </thead>
                             <tbody>
                                 {% for list in todo_lists %}
@@ -44,6 +47,7 @@
                                             <div class="btn-group me-2" role="group" aria-label="Basic mixed styles example">
                                                 <a type="button" href="/todo-list/{{list['id']}}" class="btn btn-primary"><i class="bi bi-info-square-fill"></i></a>
                                                 <a type="button" href="/todo-list/{{list['id']}}/entries" class="btn btn-success"><i class="bi bi-filter-square-fill"></i></a>
+                                                <a type="button" class="btn btn-danger" id="deleteListBtn" data-id="{{list['id']}}"><i class="bi bi-trash3-fill"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -112,3 +116,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<script>
+    //listen for every click event in the html-body
+    document.body.addEventListener("click", event => {
+        const button = event.target.closest("[data-id]"); //get elements with attribute 'data-id'
+        if (!button) return; //if element in click event doesn't include the data-id attribute, return
+        
+        event.preventDefault(); //prevent default behavior of <a> element
+        fetch(`http://127.0.0.1:5000/todo-list/${button.dataset.id}`, { method: 'DELETE' }) //send delete method request to flask server
+            .then(response => response.json())
+            .then(data => {
+                alert(`Gelöscht: ${data.message}`);
+                location.reload();
+            })
+            .catch(console.error);
+    });
+</script>
