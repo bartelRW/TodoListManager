@@ -6,13 +6,19 @@ Dieses Dokument beschreibt Schritt für Schritt, wie die Todolist-Webanwendung a
 
 
 
-## Ausgangssituation
+## Ausgangssituation und erste Schritte
+
+#### Benötigte Ressourcen
 
 Um den Server einzurichten werden folgende Ressourcen benötigt:
 
 - Raspberry Pi 3
 - SD-Karte mit Raspberry Pi OS
 - Root Rechte
+
+#### Erste Schritte
+
+Im verlaufe dieses Dokuments wird der Befehl **sudo** genutzt, dieser sorgt dafür, dass ein Befehl mit Root-Rechten ausgeführt wird.
 
 Bevor mit der Konfiguration begonnen werden kann, müssen die aktuellsten Softwarepakete installiert werden. Dazu müssen folgende Befehle ausgeführt werden:
 
@@ -27,6 +33,8 @@ Die neuesten Versionen der Pakete installieren
 ```bash
 sudo apt-get upgrade
 ```
+
+
 ## Netzwerkkonfiguration
 
 Im folgenden Abschnitt wird die Netzwerkkonfiguration des Systems beschrieben. Dabei wird zunächst der SSH-Zugriff aktiviert und eine statishe IP vergeben
@@ -52,6 +60,8 @@ DHCP konfiguration öffnen
 ```bash
 sudo nano /etc/dhcpcd.conf
 ```
+
+*nano* – öffnet eine Datei in einem Texteditor
 
 Folgenden Abschnitt in der config ändern
 
@@ -106,6 +116,8 @@ Benutzer in die Sudogruppe hinzufügen
 ```bash
 sudo usermod -aG sudo USERNAME
 ```
+
+**-aG** – Fügt den Benutzer zur angegebenen Gruppe hinzu
 ## Installation und Einrichtung eines Docker Containers
 
 Damit die Webanwendung vom Hostsystem isoliert bereitgestellt werden kann, muss ein Container erstellt werden.
