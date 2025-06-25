@@ -1,7 +1,7 @@
 
 # Deployment der Todolist-App auf einem Raspberry Pi mit Docker
 
-Dieses Dokument beschreibt Schritt für Schritt, wie die Todolist-Webanwendung auf einem Raspberry Pi bereitgestellt wird. Die Anwendung läuft in einem Docker-Container und wird über einen Apache-Webserver ausgeliefert. Der Raspberry Pi verwendet dabei eine statische IP-Adresse zur besseren Erreichbarkeit im Netzwerk.
+Dieses Dokument beschreibt Schritt für Schritt, wie die Todolist-Webanwendung auf einem Raspberry Pi bereitgestellt wird. Die Anwendung läuft in einem Docker-Container und wird über den von Flask bereitgestellten Webserver ausgeliefert. Der Raspberry Pi verwendet dabei eine statische IP-Adresse zur besseren Erreichbarkeit im Netzwerk.
 
 
 
@@ -13,6 +13,20 @@ Um den Server einzurichten werden folgende Ressourcen benötigt:
 - Raspberry Pi 3
 - SD-Karte mit Raspberry Pi OS
 - Root Rechte
+
+Bevor mit der Konfiguration begonnen werden kann, müssen die aktuellsten Softwarepakete installiert werden. Dazu müssen folgende Befehle ausgeführt werden:
+
+Paketlisten aktualisieren
+
+```bash
+sudo apt-get update
+```
+
+Die neuesten Versionen der Pakete installieren
+
+```bash
+sudo apt-get upgrade
+```
 ## Netzwerkkonfiguration
 
 Im folgenden Abschnitt wird die Netzwerkkonfiguration des Systems beschrieben. Dabei wird zunächst der SSH-Zugriff aktiviert und eine statishe IP vergeben
@@ -47,6 +61,12 @@ static ip_address=STATISCHE_IP/24
 static routers=GATEWAY
 static domain_name_servers=GATEWAY
 ```
+
+*static ip_address* – Die Statische IP-Adresse, über die der Server erreicht werden soll
+
+*static routers* – Das Gateway Ihres Netzwerks
+
+*static domain_name_servers* - Die IP-Adresse Ihres DNS-Servers
 
 Die großgeschriebenen Begriffe mit den benötigten Adressen ersetzen.
 
@@ -120,7 +140,9 @@ Mit diesem Befehl wird ein einfaches "Hello-World"-Programm aus Docker-Hub insta
 
 #### Docker Image erstellen
 
-Damit die Docker-Anwendung korrekt läuft, muss ein Docker Image erstellt werden, welches durch eine Dockerfile realisiert wird. Diese befindet sich im selben Verzeichnis wie die Webanwendung
+Damit die Docker-Anwendung korrekt läuft, muss ein Docker Image erstellt werden, welches durch eine Dockerfile realisiert wird. Diese muss sich im selben Verzeichnis wie die Webanwendung befinden. Dafür muss das Projektverzeichnis auf den Raspberry Pi kopiert werden und anschließend eine Dockerfile erstellt werden.
+
+
 
 Dockerfile erstellen
 
@@ -139,8 +161,7 @@ WORKDIR /app
 
 COPY . /app
 
-ENTRYPOINT [ "python" ]
-CMD ["server.py" ]
+CMD ["python", "server.py" ]
 ```
 
 *FROM python:3.8-alpine* – Legt das Basis Image fest
@@ -153,11 +174,15 @@ CMD ["server.py" ]
 
 *CMD ["python", "server.py"]* – Führt beim Start des Containers die Webanwendung aus
 
+Anschließend die Datei speichern (STRG + O) und schließen (STRG + X)
+
 Docker Image bauen
 
 ```bash
 sudo docker image build -t webapp .
 ```
+
+**-t** –  Übergibt dem Image einen Namen
 
 #### Docker Container ausführen
 
@@ -166,6 +191,12 @@ Container mit dem erstellten Image starten
 ```bash
 sudo docker run -p 5000:5000 -d --name todolistmanager webapp
 ```
+
+**-p 5000:5000** –  Mapped den Hostport 5000 mit dem Containerport 5000
+
+**-d** – Startet den Container im detached-mode damit man sich nicht in der Konsole des Python-Skripts befindet
+
+**--name todolistmanager** – Übergibt dem Container den Namen "todolistmanager"
 
 Die Webseite kann nun unter der zuvor statisch angelegegten IP und Port 5000 im Browser erreicht werden
 
